@@ -152,6 +152,17 @@ def api_config_post():
 		if profile.get("salary_min", 0) > profile.get("salary_max", 0) and profile.get("salary_max", 0) > 0:
 			return _json_response({"error": "salary_min must be <= salary_max"}, 400)
 
+		# Merge with existing config: preserve fields the frontend doesn't manage
+		existing = load_config()
+		# Preserve resume_path
+		existing_resume = existing.get("profile", {}).get("resume_path", "")
+		if existing_resume and not data.get("profile", {}).get("resume_path"):
+			data.setdefault("profile", {})["resume_path"] = existing_resume
+		# Preserve api_key (frontend omits it when field is empty to avoid clearing it)
+		existing_key = existing.get("ai", {}).get("api_key", "")
+		if existing_key and not data.get("ai", {}).get("api_key"):
+			data.setdefault("ai", {})["api_key"] = existing_key
+
 		# Write YAML (backend exclusively owns YAML serialization)
 		with open(CONFIG_PATH, "w", encoding="utf-8") as f:
 			yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
