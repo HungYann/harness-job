@@ -216,8 +216,8 @@ def api_resume_upload():
 
 		# Validate extension
 		name = upload.filename
-		if not name.endswith(".md"):
-			return _json_response({"error": "仅支持 .md 格式"}, 400)
+		if not (name.endswith(".md") or name.endswith(".pdf")):
+			return _json_response({"error": "仅支持 .md 或 .pdf 格式"}, 400)
 
 		# Validate size (10MB max)
 		content = upload.file.read()

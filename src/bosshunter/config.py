@@ -36,7 +36,7 @@ CITY_CODES: dict[str, str] = {
 
 DEFAULTS: dict[str, Any] = {
     "profile": {
-        "resume_path": "./resume.md",
+        "resume_path": "",  # 支持 .md 或 .pdf，通过 Web 面板上传或手动填写路径
         "resume_output_dir": "./data/resumes",
         "target_cities": ["北京"],
         "salary_min": 0,

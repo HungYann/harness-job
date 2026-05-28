@@ -63,8 +63,8 @@
 ### 第一步 — 安装依赖
 
 ```bash
-git clone https://github.com/powerycy/BossHunter.git
-cd BossHunter
+git clone https://github.com/HungYann/harness-job.git
+cd harness-job
 pip3 install -e .
 ```
 
@@ -106,7 +106,7 @@ python3 scripts/web.py &
 
 | 优先级 | 配置项 | 说明 |
 |--------|--------|------|
-| ⭐⭐⭐ | 上传简历 | 左侧「简历」区域，上传 `.md` 格式文件 |
+| ⭐⭐⭐ | 上传简历 | 左侧「简历」区域，支持 `.pdf` 或 `.md` 格式 |
 | ⭐⭐⭐ | 搜索关键词 | 如：`Python开发`、`后端工程师` |
 | ⭐⭐⭐ | 目标城市 | 选择投递城市 |
 | ⭐⭐ | 期望薪资 | 最低 / 最高薪资（K） |

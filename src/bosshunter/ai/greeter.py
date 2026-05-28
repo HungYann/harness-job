@@ -9,6 +9,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from bosshunter.db import get_db, get_jobs_by_status, update_job_greeting, update_job_status
 from bosshunter.ai.model_resolve import resolve_model
+from bosshunter.ai.resume import extract_resume_text
 
 console = Console()
 
@@ -59,11 +60,11 @@ REVIEW_PROMPT = """请评估以下某直聘招呼语的质量。
 
 
 def _get_resume_summary(config: dict) -> str:
-    """Get a brief resume summary for greeting generation."""
-    resume_path = Path(config.get("profile", {}).get("resume_path", "./resume.md"))
-    if not resume_path.exists():
+    """Get a brief resume summary for greeting generation. Supports .md and .pdf."""
+    resume_path = Path(config.get("profile", {}).get("resume_path", ""))
+    if not resume_path or not resume_path.exists():
         return ""
-    content = resume_path.read_text(encoding="utf-8")
+    content = extract_resume_text(resume_path)
     return content[:1500]
 
 

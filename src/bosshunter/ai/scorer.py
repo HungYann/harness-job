@@ -10,6 +10,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from bosshunter.db import get_db, get_jobs_by_status, update_job_score, update_job_status, update_job_quick_score
 from bosshunter.ai.prefilter import quick_score
 from bosshunter.ai.model_resolve import resolve_model
+from bosshunter.ai.resume import extract_resume_text
 
 console = Console()
 
@@ -38,11 +39,11 @@ SCORING_PROMPT = """你是一位专业的求职顾问。请根据以下简历和
 
 
 def _load_resume(config: dict) -> str:
-    """Load resume from configured path."""
-    resume_path = Path(config.get("profile", {}).get("resume_path", "./resume.md"))
-    if not resume_path.exists():
+    """Load resume from configured path. Supports .md and .pdf."""
+    resume_path = Path(config.get("profile", {}).get("resume_path", ""))
+    if not resume_path or not resume_path.exists():
         return ""
-    return resume_path.read_text(encoding="utf-8")
+    return extract_resume_text(resume_path)
 
 
 def _call_claude(prompt: str, config: dict) -> str | None:

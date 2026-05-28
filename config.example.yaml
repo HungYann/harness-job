@@ -3,7 +3,7 @@
 
 # ===== 个人信息 =====
 profile:
-  resume_path: "./resume.md"          # Markdown 格式简历路径
+  resume_path: ""                      # 简历路径，支持 .pdf 或 .md（推荐通过 Web 面板上传）
   resume_output_dir: "./data/resumes" # 定制简历输出目录
   target_cities: ["北京"]              # 目标城市列表
   salary_min: 15                       # 最低期望薪资 (K)

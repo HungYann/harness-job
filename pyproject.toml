@@ -31,6 +31,7 @@ dependencies = [
     "openai>=1.0",
     "bottle>=0.12",
     "markdown2>=2.4",
+    "pdfplumber>=0.10",
 ]
 
 [project.optional-dependencies]

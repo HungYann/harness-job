@@ -8,6 +8,28 @@ from rich.console import Console
 from bosshunter.db import get_db, get_jobs_by_status
 from bosshunter.ai.model_resolve import resolve_model
 
+
+def extract_resume_text(path: Path) -> str:
+    """从简历文件中提取纯文本，支持 .pdf 和 .md（及其他纯文本格式）。
+
+    PDF 提取依赖 pdfplumber，未安装时抛出友好错误信息。
+    """
+    if path.suffix.lower() == ".pdf":
+        try:
+            import pdfplumber
+        except ImportError:
+            raise RuntimeError(
+                "读取 PDF 简历需要安装 pdfplumber：pip install pdfplumber"
+            )
+        try:
+            with pdfplumber.open(path) as pdf:
+                pages_text = [page.extract_text() or "" for page in pdf.pages]
+            return "\n".join(pages_text).strip()
+        except Exception as e:
+            raise RuntimeError(f"PDF 解析失败: {e}")
+    # .md 或其他纯文本格式
+    return path.read_text(encoding="utf-8")
+
 console = Console()
 
 RESUME_TAILOR_PROMPT = """你是一位专业简历顾问。请根据以下岗位JD调整简历的侧重点。
@@ -214,7 +236,7 @@ def generate_tailored_resume(job_id: str, config: dict) -> Path | None:
         db.close()
         return None
 
-    resume_text = resume_path.read_text(encoding="utf-8")
+    resume_text = extract_resume_text(resume_path)
 
     # Generate tailored resume via AI
     console.print(f"[bold]为 {job['company']} - {job['title']} 生成定制简历...[/bold]")
