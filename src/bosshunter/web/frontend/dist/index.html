@@ -75,50 +75,34 @@
   DASHBOARD
 ══════════════════════════════════ -->
 <div id="page-dashboard" class="page active">
+  <div style="max-width:960px;margin:0 auto;padding:5.5rem 1.5rem 5rem;">
 
-  <!-- Hero with video -->
-  <section style="position:relative;min-height:100vh;overflow:hidden;background:#fff;padding-top:64px;">
-
-    <!-- Video layer -->
-    <div style="position:absolute;inset:64px 0 0 0;z-index:0;overflow:hidden;">
-      <video id="hero-video" muted playsinline
-        style="position:absolute;width:100%;height:100%;object-fit:cover;top:200px;inset:auto 0 0 0;opacity:0;">
-        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_083109_283f3553-e28f-428b-a723-d639c617eb2b.mp4" type="video/mp4">
-      </video>
-      <!-- top fade -->
-      <div style="position:absolute;inset:0;background:linear-gradient(to bottom, #fff 0%, transparent 40%, transparent 60%, #fff 100%);pointer-events:none;z-index:1;"></div>
-      <!-- side fade -->
-      <div style="position:absolute;inset:0;background:linear-gradient(to right, rgba(255,255,255,.4) 0%, transparent 30%, transparent 70%, rgba(255,255,255,.4) 100%);pointer-events:none;z-index:1;"></div>
-    </div>
-
-    <!-- Hero text -->
-    <div class="anim-0" style="position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(8rem - 75px) 1.5rem 5rem;">
-      <h1 class="serif anim-0" style="font-size:clamp(2.5rem,8vw,6rem);line-height:.95;letter-spacing:-2.46px;color:#000;font-weight:400;max-width:900px;">
-        智能求职，<em style="color:#6f6f6f;font-style:italic;">精准投递</em>
-      </h1>
-      <p class="anim-1" style="font-size:1rem;max-width:560px;margin-top:2rem;line-height:1.7;color:#6f6f6f;">
-        基于 Claude AI 的某直聘自动化求职助手。从岗位采集到智能评分，从招呼语生成到投递确认，全流程可控。
-      </p>
-      <button class="anim-2" onclick="showPage('config')"
-        style="margin-top:3rem;padding:.9rem 3.5rem;border-radius:9999px;background:#000;color:#fff;font-size:.9375rem;border:none;cursor:pointer;transition:transform .2s;"
+    <!-- Header row: title + CTA -->
+    <div class="anim-0" style="display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+      <div>
+        <h1 class="serif" style="font-size:clamp(1.75rem,4vw,2.75rem);line-height:1.05;letter-spacing:-1px;color:#000;font-weight:400;margin:0 0 .4rem;">
+          智能求职，<em style="color:#6f6f6f;font-style:italic;">精准投递</em>
+        </h1>
+        <p style="font-size:.875rem;color:#6f6f6f;margin:0;line-height:1.6;max-width:520px;">
+          基于 Claude AI 的某直聘自动化求职助手。从岗位采集到智能评分，从招呼语生成到投递确认，全流程可控。
+        </p>
+      </div>
+      <button onclick="showPage('config')"
+        style="flex-shrink:0;padding:.55rem 1.5rem;border-radius:9999px;background:#000;color:#fff;font-size:.8125rem;border:none;cursor:pointer;white-space:nowrap;transition:transform .2s;"
         onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
         开始配置
       </button>
     </div>
 
     <!-- Funnel cards -->
-    <div style="position:relative;z-index:10;max-width:960px;margin:0 auto;padding:0 1.5rem 5rem;">
-      <div id="funnel-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;">
-        <!-- JS rendered -->
-      </div>
+    <div class="anim-1" id="funnel-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:.625rem;margin-bottom:2.5rem;">
+      <!-- JS rendered -->
     </div>
-  </section>
 
-  <!-- Jobs section -->
-  <section style="max-width:960px;margin:0 auto;padding:4rem 1.5rem 6rem;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
-      <h2 class="serif" style="font-size:2rem;font-weight:400;">岗位列表</h2>
-      <div id="filter-bar" style="display:flex;gap:.5rem;flex-wrap:wrap;">
+    <!-- Jobs section -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem;">
+      <h2 class="serif anim-1" style="font-size:1.375rem;font-weight:400;margin:0;">岗位列表</h2>
+      <div id="filter-bar" class="anim-1" style="display:flex;gap:.375rem;flex-wrap:wrap;">
         <button class="flt-btn active" data-s="" onclick="setFilter(this,'')">全部</button>
         <button class="flt-btn" data-s="pending"  onclick="setFilter(this,'pending')">待处理</button>
         <button class="flt-btn" data-s="scored"   onclick="setFilter(this,'scored')">已评分</button>
@@ -127,11 +111,12 @@
         <button class="flt-btn" data-s="filtered" onclick="setFilter(this,'filtered')">已淘汰</button>
       </div>
     </div>
-    <div id="jobs-list"><p style="color:#6f6f6f;text-align:center;padding:3rem 0;">加载中…</p></div>
-    <div id="load-more" style="display:none;text-align:center;margin-top:1.5rem;">
-      <button onclick="loadMore()" style="font-size:.875rem;color:#6f6f6f;background:none;border:none;cursor:pointer;">加载更多 ↓</button>
+    <div id="jobs-list"><p style="color:#6f6f6f;text-align:center;padding:2.5rem 0;font-size:.875rem;">加载中…</p></div>
+    <div id="load-more" style="display:none;text-align:center;margin-top:1.25rem;">
+      <button onclick="loadMore()" style="font-size:.8125rem;color:#6f6f6f;background:none;border:none;cursor:pointer;">加载更多 ↓</button>
     </div>
-  </section>
+
+  </div>
 </div>
 
 
@@ -295,9 +280,6 @@
   .pvd-btn { font-size:.8125rem; padding:.6rem .5rem; border-radius:.75rem; border:1px solid #e5e7eb; color:#6f6f6f; background:#fff; cursor:pointer; transition:all .15s; text-align:center; }
   .pvd-btn:hover { border-color:#000; color:#000; }
   .pvd-btn.active { border-color:#000; background:#000; color:#fff; }
-  /* Funnel card */
-  .fc { background:rgba(255,255,255,.85); backdrop-filter:blur(8px); border-radius:1.25rem; padding:1.25rem; border:1px solid #f0f0f0; transition:border-color .15s; }
-  .fc:hover { border-color:#d1d5db; }
 </style>
 
 
@@ -345,10 +327,11 @@ async function loadFunnel() {
   try {
     const d = await fetch('/api/funnel').then(r=>r.json());
     document.getElementById('funnel-grid').innerHTML = FUNNEL.map(f=>`
-      <div class="fc">
-        <div style="font-size:1.25rem;margin-bottom:.25rem;">${f.icon}</div>
-        <div class="serif" style="font-size:2rem;font-weight:400;color:${f.c};line-height:1;">${d[f.k]??0}</div>
-        <div style="font-size:.7rem;color:#6f6f6f;margin-top:.25rem;">${f.label}</div>
+      <div style="border:1px solid #f0f0f0;border-radius:.875rem;padding:.875rem .75rem;background:#fff;transition:border-color .15s;cursor:default;"
+        onmouseover="this.style.borderColor='#d1d5db'" onmouseout="this.style.borderColor='#f0f0f0'">
+        <div style="font-size:.9rem;margin-bottom:.15rem;color:#c4c4c4;">${f.icon}</div>
+        <div class="serif" style="font-size:1.625rem;font-weight:400;color:${f.c};line-height:1;">${d[f.k]??0}</div>
+        <div style="font-size:.6875rem;color:#9ca3af;margin-top:.15rem;letter-spacing:.02em;">${f.label}</div>
       </div>
     `).join('');
   } catch {}
@@ -644,7 +627,7 @@ function initVideo() {
 
 // ── Boot ───────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  ping(); loadFunnel(); loadJobs(); initVideo();
+  ping(); loadFunnel(); loadJobs();
   setInterval(ping, 30000);
   setInterval(loadFunnel, 60000);
 });
