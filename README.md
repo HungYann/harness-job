@@ -123,7 +123,7 @@ chrome.exe --remote-debugging-port=9222 --remote-allow-origins=* --user-data-dir
 python3 scripts/web.py &
 ```
 
-浏览器自动打开 **http://127.0.0.1:8686**，在面板中完成以下配置：
+浏览器自动打开 **http://127.0.0.1:8686** ，在面板中完成以下配置：
 
 | 优先级 | 配置项 | 说明 |
 |--------|--------|------|
