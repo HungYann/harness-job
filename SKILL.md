@@ -1,6 +1,6 @@
-# BossHunter
+# Harness Job
 
-某直聘智能求职 Agent — 全自动化求职流水线。
+🌐 [harnessjob.com](https://harnessjob.com) · 某直聘智能求职 Agent — 全自动化求职流水线。
 
 ## 触发条件
 

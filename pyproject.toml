@@ -3,16 +3,16 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "bosshunter"
-version = "1.0.0"
-description = "某直聘智能求职Agent - 从采集到投递的全自动化流水线"
+name = "harness-job"
+version = "1.1.0"
+description = "Harness Job — 某直聘智能求职Agent，从采集到投递的全自动化流水线"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [
-    { name = "BossHunter Contributors" }
+    { name = "Harness Job Contributors" }
 ]
-keywords = ["job-hunting", "automation", "ai-agent", "claude-code-skill"]
+keywords = ["job-hunting", "automation", "ai-agent", "claude-code-skill", "harness-job"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -43,7 +43,7 @@ dev = [
 bosshunter = "bosshunter.main:cli"
 
 [project.urls]
-Homepage = "https://github.com/powerycy/BossHunter"
+Homepage = "https://harnessjob.com"
 Issues = "https://github.com/powerycy/BossHunter/issues"
 
 [tool.setuptools.packages.find]
