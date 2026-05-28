@@ -344,6 +344,36 @@ BossHunter/
 
 ---
 
+## 相关资源与链接
+
+### AI 服务
+
+| 服务 | 文档 | 控制台 |
+|------|------|--------|
+| Anthropic Claude | [docs.anthropic.com](https://docs.anthropic.com) | [console.anthropic.com](https://console.anthropic.com) |
+| DeepSeek | [platform.deepseek.com/docs](https://platform.deepseek.com/docs) | [platform.deepseek.com](https://platform.deepseek.com) |
+| OpenAI | [platform.openai.com/docs](https://platform.openai.com/docs) | [platform.openai.com](https://platform.openai.com) |
+
+### 技术文档
+
+| 技术 | 链接 |
+|------|------|
+| Chrome DevTools Protocol | [chromedevtools.github.io/devtools-protocol](https://chromedevtools.github.io/devtools-protocol/) |
+| pdfplumber（PDF 解析） | [github.com/jsvine/pdfplumber](https://github.com/jsvine/pdfplumber) |
+| websocket-client | [websocket-client.readthedocs.io](https://websocket-client.readthedocs.io) |
+| Bottle（Web 框架） | [bottlepy.org](https://bottlepy.org) |
+
+### 项目链接
+
+| | 链接 |
+|--|------|
+| 🌐 官网 | [harnessjob.com](https://harnessjob.com) |
+| 📦 GitHub | [github.com/HungYann/harness-job](https://github.com/HungYann/harness-job) |
+| 🐛 Issues | [github.com/HungYann/harness-job/issues](https://github.com/HungYann/harness-job/issues) |
+| 💬 Discussions | [github.com/HungYann/harness-job/discussions](https://github.com/HungYann/harness-job/discussions) |
+
+---
+
 ## 贡献
 
 欢迎 PR 和 Issue。请注意：
