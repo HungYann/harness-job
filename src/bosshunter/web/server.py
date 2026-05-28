@@ -196,12 +196,13 @@ def api_resume_get():
 			p = Path(resume_path)
 			stat = p.stat()
 			return _json_response({
+				"exists": True,
 				"filename": p.name,
 				"size": stat.st_size,
 				"uploaded_at": time.strftime("%Y-%m-%d %H:%M", time.localtime(stat.st_mtime)),
 				"path": str(p)
 			})
-		return _json_response(None)
+		return _json_response({"exists": False, "filename": None})
 	except Exception as e:
 		return _json_response({"error": str(e)}, 500)
 

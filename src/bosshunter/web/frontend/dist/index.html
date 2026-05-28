@@ -396,17 +396,23 @@ function esc(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&l
 // ── Resume ─────────────────────────────────────────
 async function loadResume() {
   try {
-    const d = await fetch('/api/resume').then(r=>r.json());
-    if (d.exists && d.filename) {
+    const r = await fetch('/api/resume');
+    const d = await r.json();
+    // API returns null when no resume, or {filename, size, uploaded_at, path} when exists
+    if (d && d.filename) {
       document.getElementById('resume-name').textContent = d.filename;
-      document.getElementById('resume-info').textContent = d.size_kb ? d.size_kb+' KB' : '已上传';
-      document.getElementById('del-resume').style.display='inline-block';
+      const kb = d.size ? (d.size / 1024).toFixed(1) + ' KB' : '';
+      const at = d.uploaded_at ? '  ·  ' + d.uploaded_at : '';
+      document.getElementById('resume-info').textContent = (kb + at).trim() || '已上传';
+      document.getElementById('del-resume').style.display = 'inline-block';
     } else {
       document.getElementById('resume-name').textContent = '未上传简历';
       document.getElementById('resume-info').textContent = '支持 .md 或 .pdf 格式';
-      document.getElementById('del-resume').style.display='none';
+      document.getElementById('del-resume').style.display = 'none';
     }
-  } catch {}
+  } catch(e) {
+    console.error('resume load error', e);
+  }
 }
 
 async function uploadResume(inp) {
