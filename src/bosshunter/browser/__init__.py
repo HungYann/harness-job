@@ -1,4 +1,5 @@
 """Browser connection module - CDP Proxy connection to user's Chrome."""
+from __future__ import annotations
 
 import json
 import time

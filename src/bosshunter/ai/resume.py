@@ -1,4 +1,5 @@
 """AI Resume - Generate tailored resume for specific jobs."""
+from __future__ import annotations
 
 from pathlib import Path
 

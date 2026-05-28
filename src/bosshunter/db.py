@@ -1,4 +1,5 @@
 """Database module - SQLite storage for jobs, history and state tracking."""
+from __future__ import annotations
 
 import os
 import sqlite3

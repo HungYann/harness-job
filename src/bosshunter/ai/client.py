@@ -9,8 +9,8 @@ Provider selection via config.yaml  ai.provider:
 All four share the same call_ai() entry point so callers don't need to
 know which SDK is in use.
 """
-
 from __future__ import annotations
+
 
 import os
 from typing import Any

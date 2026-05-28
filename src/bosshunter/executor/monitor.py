@@ -1,4 +1,5 @@
 """Monitor module - Watch for HR replies, auto-reply, and send resumes."""
+from __future__ import annotations
 
 import time
 import json

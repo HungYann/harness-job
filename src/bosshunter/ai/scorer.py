@@ -1,4 +1,5 @@
 """AI Scorer - Match jobs against resume using configured AI provider."""
+from __future__ import annotations
 
 import json
 from pathlib import Path

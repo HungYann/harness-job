@@ -1,4 +1,5 @@
 """AI Greeter - Generate personalized greeting messages with self-review."""
+from __future__ import annotations
 
 import json
 from pathlib import Path
