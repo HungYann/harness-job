@@ -1,0 +1,60 @@
+# BossHunter 配置文件示例
+# 复制为 config.yaml 并填入你的实际信息
+
+# ===== 个人信息 =====
+profile:
+  resume_path: "./resume.md"          # Markdown 格式简历路径
+  resume_output_dir: "./data/resumes" # 定制简历输出目录
+  target_cities: ["北京"]              # 目标城市列表
+  salary_min: 15                       # 最低期望薪资 (K)
+  salary_max: 30                       # 最高期望薪资 (K)
+  deal_breakers: ["外包", "996", "大小周"]  # 一票否决关键词
+
+# ===== 搜索设置 =====
+search:
+  keywords: ["Python开发", "后端工程师"]  # 搜索关键词
+  cities: []                             # 搜索城市（空=使用 target_cities）
+  salary_range: ""                       # 薪资范围筛选（如 "15-25K"）
+  max_pages: 3                           # 每个关键词最多翻页数
+
+# ===== 评分设置 =====
+scoring:
+  threshold: 71               # AI 深度评分通过线（满分100）
+  prefilter_threshold: 40     # 预筛分数线
+  max_candidates: 20          # 每轮最大候选数
+
+# ===== 反检测设置 =====
+throttle:
+  daily_limit: 30             # 每日发送上限
+  interval_min: 60            # 操作最短间隔（秒）
+  interval_max: 180           # 操作最长间隔（秒）
+  browse_before_greet: true   # 发送前模拟浏览岗位页
+  browse_duration_min: 15     # 浏览最短时长（秒）
+  browse_duration_max: 30     # 浏览最长时长（秒）
+  send_windows: ["09:00-16:00"]  # 发送时间窗口
+  day_off_probability: 0.05   # 随机休息概率（5%）
+
+# ===== AI 服务设置 =====
+ai:
+  provider: "anthropic"       # 可选: anthropic / openai / custom
+  model: "claude-sonnet-4-6"  # 模型名称
+  # api_key: ""               # API Key（也可通过环境变量 ANTHROPIC_API_KEY 设置）
+  # base_url: ""              # 自定义 API 地址（留空使用默认）
+  greeting_review_threshold: 7.0  # 招呼语质量阈值
+  greeting_max_iterations: 2      # 招呼语最大迭代次数
+
+# ===== 监听设置 =====
+monitor:
+  interval: 30                # 检查间隔（分钟）
+  chat_url: "https://www.zhipin.com/web/geek/chat"
+  max_resume_sends_per_cycle: 5  # 每轮最多发简历数
+
+# ===== 跟进设置 =====
+follow_up:
+  enabled: true               # 是否启用自动跟进
+  interval_hours: 48          # 跟进间隔（小时）
+  skip_weekends: true         # 跳过周末
+
+# ===== 去重设置 =====
+dedup:
+  history_file: "./data/bosshunter-history.jsonl"
