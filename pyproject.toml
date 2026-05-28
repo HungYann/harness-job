@@ -45,7 +45,8 @@ bosshunter = "bosshunter.main:cli"
 
 [project.urls]
 Homepage = "https://harnessjob.com"
-Issues = "https://github.com/powerycy/BossHunter/issues"
+Source = "https://github.com/HungYann/harness-job"
+Issues = "https://github.com/HungYann/harness-job/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -62,6 +62,14 @@
 
 ### 第一步 — 安装依赖
 
+**方式一：pip 直接安装（无需 clone）**
+
+```bash
+pip3 install git+https://github.com/HungYann/harness-job.git
+```
+
+**方式二：clone 后本地安装（便于修改源码）**
+
 ```bash
 git clone https://github.com/HungYann/harness-job.git
 cd harness-job
