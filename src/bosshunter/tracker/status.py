@@ -84,7 +84,7 @@ def show_dashboard() -> None:
     stats = get_stats(db)
 
     if not stats:
-        console.print("[yellow]暂无数据，请先运行 bosshunter run[/yellow]")
+        console.print("[yellow]暂无数据，请先运行 python3 scripts/run.py[/yellow]")
         db.close()
         return
 

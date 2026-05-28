@@ -58,4 +58,4 @@ def run_pipeline(config: dict) -> None:
     from bosshunter.executor.sender import send_greetings
     sent = send_greetings(config)
     console.print(f"\n[bold green]═══ 完成！发送 {sent} 条招呼语 ═══[/bold green]")
-    console.print("\n[dim]提示: 使用 'bosshunter monitor' 监听HR回复并自动投递简历[/dim]")
+    console.print("\n[dim]提示: 使用 'python3 scripts/monitor.py' 监听HR回复并自动投递简历[/dim]")

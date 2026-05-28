@@ -13,7 +13,7 @@ console = Console()
 
 def _hint_web():
     """Print a one-line hint about the web dashboard."""
-    console.print("[dim]💡 运行 bosshunter web 可打开可视化看板[/dim]")
+    console.print("[dim]💡 运行 python3 scripts/web.py 可打开可视化看板[/dim]")
 
 
 def _is_first_run(config_path: Path | None = None) -> bool:
@@ -29,7 +29,7 @@ def _prompt_setup(port: int = 8686) -> None:
     console.print()
     console.print("[yellow]检测到尚未配置，建议先进入 Web 端完成初始设置：[/yellow]")
     console.print()
-    console.print(f"  [bold]bosshunter web[/bold]  →  打开配置面板 (http://127.0.0.1:{port})")
+    console.print(f"  [bold]python3 scripts/web.py[/bold]  →  打开配置面板 (http://127.0.0.1:{port})")
     console.print()
     console.print("[dim]在面板中可以设置：[/dim]")
     console.print("[dim]  • 简历路径、期望薪资、一票否决词[/dim]")

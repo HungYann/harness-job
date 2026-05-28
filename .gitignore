@@ -13,6 +13,8 @@ __pycache__/
 .eggs/
 dist/
 build/
+# 前端编译产物需要入库（Web 服务直接 serve）
+!src/bosshunter/web/frontend/dist/
 *.egg
 .venv/
 venv/
