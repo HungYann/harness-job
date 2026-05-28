@@ -1,12 +1,11 @@
 """AI Resume - Generate tailored resume for specific jobs."""
 
-import os
 from pathlib import Path
 
 from rich.console import Console
 
 from bosshunter.db import get_db, get_jobs_by_status
-from bosshunter.ai.model_resolve import resolve_model
+from bosshunter.ai.client import call_ai
 
 
 def extract_resume_text(path: Path) -> str:
@@ -56,44 +55,8 @@ RESUME_TAILOR_PROMPT = """你是一位专业简历顾问。请根据以下岗位
 
 
 def _call_claude(prompt: str, config: dict) -> str | None:
-    """Call Claude API and return response text."""
-    try:
-        import anthropic
-    except ImportError:
-        return None
-
-    ai_cfg = config.get("ai", {})
-    api_key = (
-        os.environ.get("ANTHROPIC_API_KEY")
-        or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-        or ai_cfg.get("api_key")
-    )
-    if not api_key:
-        return None
-
-    model = resolve_model(ai_cfg.get("model", "claude-sonnet-4-6"), config)
-    base_url = os.environ.get("ANTHROPIC_BASE_URL") or ai_cfg.get("base_url")
-
-    kwargs = {"api_key": api_key}
-    if base_url:
-        kwargs["base_url"] = base_url
-
-    client = anthropic.Anthropic(**kwargs)
-
-    try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=4000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        # Skip ThinkingBlock, find TextBlock
-        for block in response.content:
-            if hasattr(block, 'text'):
-                return block.text.strip()
-        return None
-    except Exception as e:
-        console.print(f"[red]API 调用失败: {e}[/red]")
-        return None
+    """Delegate to unified call_ai()."""
+    return call_ai(prompt, config, max_tokens=4000)
 
 
 def _render_pdf(markdown_text: str, output_path: Path) -> bool:

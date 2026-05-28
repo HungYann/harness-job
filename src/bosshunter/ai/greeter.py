@@ -1,6 +1,5 @@
 """AI Greeter - Generate personalized greeting messages with self-review."""
 
-import os
 import json
 from pathlib import Path
 
@@ -8,7 +7,7 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from bosshunter.db import get_db, get_jobs_by_status, update_job_greeting, update_job_status
-from bosshunter.ai.model_resolve import resolve_model
+from bosshunter.ai.client import call_ai
 from bosshunter.ai.resume import extract_resume_text
 
 console = Console()
@@ -69,44 +68,8 @@ def _get_resume_summary(config: dict) -> str:
 
 
 def _call_claude(prompt: str, config: dict) -> str | None:
-    """Call Claude API and return response text."""
-    try:
-        import anthropic
-    except ImportError:
-        return None
-
-    ai_cfg = config.get("ai", {})
-    api_key = (
-        os.environ.get("ANTHROPIC_API_KEY")
-        or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-        or ai_cfg.get("api_key")
-    )
-    if not api_key:
-        return None
-
-    model = resolve_model(ai_cfg.get("model", "claude-sonnet-4-6"), config)
-    base_url = os.environ.get("ANTHROPIC_BASE_URL") or ai_cfg.get("base_url")
-
-    kwargs = {"api_key": api_key}
-    if base_url:
-        kwargs["base_url"] = base_url
-
-    client = anthropic.Anthropic(**kwargs)
-
-    try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=300,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        # Skip ThinkingBlock, find TextBlock
-        for block in response.content:
-            if hasattr(block, 'text'):
-                return block.text.strip()
-        return None
-    except Exception as e:
-        console.print(f"[red]API 调用失败: {e}[/red]")
-        return None
+    """Delegate to unified call_ai()."""
+    return call_ai(prompt, config, max_tokens=300)
 
 
 def _review_greeting(greeting: str, job: dict, config: dict) -> dict | None:

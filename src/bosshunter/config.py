@@ -65,8 +65,10 @@ DEFAULTS: dict[str, Any] = {
         "day_off_probability": 0.05,
     },
     "ai": {
-        "provider": "anthropic",
+        "provider": "anthropic",   # anthropic | deepseek | openai | custom
         "model": "claude-sonnet-4-6",
+        "api_key": "",             # 留空则读取对应环境变量
+        "base_url": "",            # custom provider 专用
         "greeting_review_threshold": 7.0,
         "greeting_max_iterations": 2,
     },

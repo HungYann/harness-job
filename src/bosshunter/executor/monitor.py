@@ -12,7 +12,7 @@ from bosshunter.db import (
     update_job_status, add_history,
 )
 from bosshunter.throttle import RequestThrottle, SendWindowChecker, ProgressiveBackoff, should_take_day_off
-from bosshunter.ai.model_resolve import resolve_model
+from bosshunter.ai.client import call_ai
 
 console = Console()
 
@@ -109,12 +109,18 @@ JS_VERIFY_RESUME_SENT = """
 
 
 def _call_claude(prompt: str, config: dict) -> str | None:
-    """Call Claude API and return response text."""
+    """Delegate to unified call_ai()."""
+    return call_ai(prompt, config, max_tokens=500)
+
+
+def _call_claude_legacy(prompt: str, config: dict) -> str | None:
+    """Legacy stub kept for reference — use _call_claude()."""
     try:
         import anthropic
     except ImportError:
         return None
 
+    import os
     ai_cfg = config.get("ai", {})
     api_key = (
         os.environ.get("ANTHROPIC_API_KEY")
@@ -124,22 +130,12 @@ def _call_claude(prompt: str, config: dict) -> str | None:
     if not api_key:
         return None
 
-    model = resolve_model(ai_cfg.get("model", "claude-sonnet-4-6"), config)
-    base_url = os.environ.get("ANTHROPIC_BASE_URL") or ai_cfg.get("base_url")
-
-    kwargs = {"api_key": api_key}
-    if base_url:
-        kwargs["base_url"] = base_url
-
-    client = anthropic.Anthropic(**kwargs)
-
     try:
         response = client.messages.create(
-            model=model,
+            model="claude-sonnet-4-6",
             max_tokens=500,
             messages=[{"role": "user", "content": prompt}]
         )
-        # Skip ThinkingBlock, find TextBlock
         for block in response.content:
             if hasattr(block, 'text'):
                 return block.text.strip()

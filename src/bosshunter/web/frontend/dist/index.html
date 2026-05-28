@@ -216,10 +216,29 @@
       <!-- AI -->
       <section class="fs">
         <h2 class="serif fh">AI 设置</h2>
+
+        <label class="fl">AI 服务商</label>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.25rem;" id="provider-grid">
+          <button type="button" class="pvd-btn active" data-p="anthropic"  onclick="setProvider(this)">Anthropic</button>
+          <button type="button" class="pvd-btn"        data-p="deepseek"   onclick="setProvider(this)">DeepSeek</button>
+          <button type="button" class="pvd-btn"        data-p="openai"     onclick="setProvider(this)">OpenAI</button>
+          <button type="button" class="pvd-btn"        data-p="custom"     onclick="setProvider(this)">自定义</button>
+        </div>
+
+        <!-- provider hint -->
+        <div id="pvd-hint" style="font-size:.75rem;color:#6f6f6f;background:#fafafa;border-radius:.75rem;padding:.75rem 1rem;margin-bottom:1.25rem;line-height:1.6;"></div>
+
         <label class="fl">模型名称</label>
-        <input id="ai-model" type="text" class="fi" value="claude-sonnet-4-6">
-        <label class="fl" style="margin-top:1rem;">API Key <span style="color:#9ca3af;font-weight:400;">(留空则读取环境变量)</span></label>
-        <input id="ai-key" type="password" class="fi" placeholder="sk-ant-…">
+        <input id="ai-model" type="text" class="fi" value="claude-sonnet-4-6" style="margin-bottom:1rem;">
+
+        <label class="fl">API Key <span style="color:#9ca3af;font-weight:400;">(留空则读取环境变量)</span></label>
+        <input id="ai-key" type="password" class="fi" placeholder="" style="margin-bottom:1rem;">
+
+        <!-- base_url — only shown for custom -->
+        <div id="base-url-row" style="display:none;">
+          <label class="fl">Base URL</label>
+          <input id="ai-baseurl" type="text" class="fi" placeholder="https://api.example.com">
+        </div>
       </section>
 
       <!-- 频率 -->
@@ -272,6 +291,10 @@
   .flt-btn { font-size:.75rem; padding:.35rem 1rem; border-radius:9999px; border:1px solid #e5e7eb; color:#6f6f6f; background:#fff; cursor:pointer; transition:all .15s; }
   .flt-btn:hover { border-color:#000; color:#000; }
   .flt-btn.active { border-color:#000; background:#000; color:#fff; }
+  /* Provider selector */
+  .pvd-btn { font-size:.8125rem; padding:.6rem .5rem; border-radius:.75rem; border:1px solid #e5e7eb; color:#6f6f6f; background:#fff; cursor:pointer; transition:all .15s; text-align:center; }
+  .pvd-btn:hover { border-color:#000; color:#000; }
+  .pvd-btn.active { border-color:#000; background:#000; color:#fff; }
   /* Funnel card */
   .fc { background:rgba(255,255,255,.85); backdrop-filter:blur(8px); border-radius:1.25rem; padding:1.25rem; border:1px solid #f0f0f0; transition:border-color .15s; }
   .fc:hover { border-color:#d1d5db; }
@@ -455,7 +478,9 @@ async function initConfig() {
     sv('thr',     sc.threshold||71);     document.getElementById('thr-v').textContent=sc.threshold||71;
     sv('pfr',     sc.prefilter_threshold||40); document.getElementById('pfr-v').textContent=sc.prefilter_threshold||40;
     sv('max-c',   sc.max_candidates||20);
-    sv('ai-model',ai.model||'claude-sonnet-4-6');
+    syncProviderUI(ai.provider || 'anthropic');
+    sv('ai-model', ai.model || 'claude-sonnet-4-6');
+    if (ai.base_url) sv('ai-baseurl', ai.base_url);
     sv('t-daily', t.daily_limit||30);
     sv('t-imin',  t.interval_min||60);
     sv('t-win',   (t.send_windows||['09:00-16:00']).join(', '));
@@ -503,13 +528,70 @@ function addTag(e, type) {
 
 function rmTag(type, v) { tags[type]=tags[type].filter(t=>t!==v); renderTags(type); }
 
+// ── Provider selector ──────────────────────────────
+const PROVIDER_META = {
+  anthropic: {
+    model: 'claude-sonnet-4-6',
+    keyPlaceholder: 'sk-ant-…',
+    hint: '环境变量: <code>ANTHROPIC_API_KEY</code> &nbsp;·&nbsp; 推荐模型: claude-sonnet-4-6 / claude-opus-4',
+    showBaseUrl: false,
+  },
+  deepseek: {
+    model: 'deepseek-chat',
+    keyPlaceholder: 'sk-…  (DeepSeek API Key)',
+    hint: '环境变量: <code>DEEPSEEK_API_KEY</code> &nbsp;·&nbsp; 推荐模型: deepseek-chat / deepseek-reasoner<br>API 文档: <a href="https://platform.deepseek.com" target="_blank" style="color:#000;text-decoration:underline;">platform.deepseek.com</a>',
+    showBaseUrl: false,
+  },
+  openai: {
+    model: 'gpt-4o',
+    keyPlaceholder: 'sk-…  (OpenAI API Key)',
+    hint: '环境变量: <code>OPENAI_API_KEY</code> &nbsp;·&nbsp; 推荐模型: gpt-4o / gpt-4o-mini',
+    showBaseUrl: false,
+  },
+  custom: {
+    model: '',
+    keyPlaceholder: 'API Key',
+    hint: '填写 Base URL 和 API Key，兼容任意 OpenAI 格式的中转服务（如 One API、New API）。',
+    showBaseUrl: true,
+  },
+};
+
+let currentProvider = 'anthropic';
+
+function setProvider(btn) {
+  currentProvider = btn.dataset.p;
+  document.querySelectorAll('.pvd-btn').forEach(b => b.classList.toggle('active', b === btn));
+  const meta = PROVIDER_META[currentProvider];
+  document.getElementById('pvd-hint').innerHTML = meta.hint;
+  document.getElementById('ai-key').placeholder = meta.keyPlaceholder;
+  document.getElementById('base-url-row').style.display = meta.showBaseUrl ? 'block' : 'none';
+  // Only auto-fill model if field is empty or was previously a known default
+  const modelEl = document.getElementById('ai-model');
+  const knownDefaults = Object.values(PROVIDER_META).map(m => m.model).filter(Boolean);
+  if (!modelEl.value || knownDefaults.includes(modelEl.value)) {
+    modelEl.value = meta.model;
+  }
+}
+
+// Call on init to show hint for current provider
+function syncProviderUI(provider) {
+  currentProvider = provider || 'anthropic';
+  const btn = document.querySelector(`.pvd-btn[data-p="${currentProvider}"]`);
+  if (btn) setProvider(btn);
+}
+
 async function saveConfig(e) {
   e.preventDefault();
   const payload = {
     profile: { target_cities:selCities, salary_min:+document.getElementById('sal-min').value||0, salary_max:+document.getElementById('sal-max').value||0, deal_breakers:tags.db },
     search:  { keywords:tags.kw, cities:selCities },
     scoring: { threshold:+document.getElementById('thr').value, prefilter_threshold:+document.getElementById('pfr').value, max_candidates:+document.getElementById('max-c').value },
-    ai:      { model:document.getElementById('ai-model').value, ...(document.getElementById('ai-key').value ? {api_key:document.getElementById('ai-key').value} : {}) },
+    ai:      {
+      provider: currentProvider,
+      model: document.getElementById('ai-model').value,
+      ...(document.getElementById('ai-key').value    ? {api_key:  document.getElementById('ai-key').value}     : {}),
+      ...(document.getElementById('ai-baseurl').value ? {base_url: document.getElementById('ai-baseurl').value} : {}),
+    },
     throttle:{ daily_limit:+document.getElementById('t-daily').value, interval_min:+document.getElementById('t-imin').value,
                send_windows:document.getElementById('t-win').value.split(',').map(s=>s.trim()).filter(Boolean) },
   };
