@@ -154,7 +154,7 @@
     </div>
 
     <!-- Form -->
-    <form id="cfg-form" onsubmit="saveConfig(event)">
+    <form id="cfg-form" onsubmit="return false;">
 
       <!-- 搜索 -->
       <section class="fs">
@@ -244,7 +244,7 @@
       </section>
 
       <div style="display:flex;justify-content:flex-end;padding-top:1rem;">
-        <button type="submit"
+        <button type="button" onclick="saveConfig()"
           style="padding:.9rem 3.5rem;border-radius:9999px;background:#000;color:#fff;font-size:.9375rem;border:none;cursor:pointer;transition:transform .2s;"
           onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
           保存配置
@@ -563,25 +563,53 @@ function syncProviderUI(provider) {
   if (btn) setProvider(btn);
 }
 
-async function saveConfig(e) {
-  e.preventDefault();
-  const payload = {
-    profile: { target_cities:selCities, salary_min:+document.getElementById('sal-min').value||0, salary_max:+document.getElementById('sal-max').value||0, deal_breakers:tags.db },
-    search:  { keywords:tags.kw, cities:selCities },
-    scoring: { threshold:+document.getElementById('thr').value, prefilter_threshold:+document.getElementById('pfr').value, max_candidates:+document.getElementById('max-c').value },
-    ai:      {
-      provider: currentProvider,
-      model: document.getElementById('ai-model').value,
-      ...(document.getElementById('ai-key').value    ? {api_key:  document.getElementById('ai-key').value}     : {}),
-      ...(document.getElementById('ai-baseurl').value ? {base_url: document.getElementById('ai-baseurl').value} : {}),
-    },
-    throttle:{ daily_limit:+document.getElementById('t-daily').value, interval_min:+document.getElementById('t-imin').value,
-               send_windows:document.getElementById('t-win').value.split(',').map(s=>s.trim()).filter(Boolean) },
-  };
+function gv(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+async function saveConfig() {
   try {
-    const r = await fetch('/api/config', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-    r.ok ? toast('配置已保存 ✓') : toast((await r.json()).error||'保存失败', true);
-  } catch { toast('保存失败', true); }
+    const payload = {
+      profile: {
+        target_cities: selCities,
+        salary_min: parseInt(gv('sal-min')) || 0,
+        salary_max: parseInt(gv('sal-max')) || 0,
+        deal_breakers: tags.db,
+      },
+      search: {
+        keywords: tags.kw,
+        cities: selCities,
+      },
+      scoring: {
+        threshold: parseInt(gv('thr')) || 71,
+        prefilter_threshold: parseInt(gv('pfr')) || 40,
+        max_candidates: parseInt(gv('max-c')) || 20,
+      },
+      ai: {
+        provider: currentProvider || 'anthropic',
+        model: gv('ai-model') || 'claude-sonnet-4-6',
+        ...(gv('ai-key')     ? { api_key:  gv('ai-key')     } : {}),
+        ...(gv('ai-baseurl') ? { base_url: gv('ai-baseurl') } : {}),
+      },
+      throttle: {
+        daily_limit: parseInt(gv('t-daily')) || 30,
+        interval_min: parseInt(gv('t-imin')) || 60,
+        send_windows: gv('t-win').split(',').map(s=>s.trim()).filter(Boolean),
+      },
+    };
+
+    const r = await fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const d = await r.json();
+    r.ok ? toast('配置已保存 ✓') : toast(d.error || '保存失败', true);
+  } catch(e) {
+    console.error('saveConfig error:', e);
+    toast('保存失败: ' + e.message, true);
+  }
 }
 
 // ── Toast ──────────────────────────────────────────

@@ -182,7 +182,8 @@ def api_config_download():
 
 @app.route("/api/config/cities")
 def api_cities():
-	return _json_response(CITY_CODES)
+	# Return sorted list of city names (not the code dict)
+	return _json_response(sorted(CITY_CODES.keys()))
 
 
 # ─── Resume APIs ─────────────────────────────────────────
