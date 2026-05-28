@@ -52,9 +52,9 @@
 
 | 依赖 | 版本 | 用途 |
 |------|------|------|
-| Python | 3.11+ | 核心运行时 |
+| Python | 3.9+ | 核心运行时 |
 | Chrome | 最新稳定版 | 需开启远程调试 |
-| Anthropic API Key | — | AI 评分 / 招呼语 / 简历生成 |
+| AI API Key | Anthropic / DeepSeek / OpenAI | AI 评分 / 招呼语 / 简历生成 |
 
 ---
 
@@ -78,11 +78,20 @@ pip3 install -e .
 
 ### 第二步 — 设置 API Key
 
+支持三种 AI 服务商，任选其一：
+
 ```bash
+# Anthropic (Claude)
 export ANTHROPIC_API_KEY="sk-ant-xxxxxx"
+
+# DeepSeek（国内访问更稳定）
+export DEEPSEEK_API_KEY="sk-xxxxxx"
+
+# OpenAI
+export OPENAI_API_KEY="sk-xxxxxx"
 ```
 
-> 也可以在后续 Web 配置面板中填写，或写入 `config.yaml` 的 `ai.api_key` 字段。
+> 也可以在 Web 配置面板的「AI 设置」中直接填写，无需设置环境变量。
 
 ### 第三步 — 开启 Chrome 远程调试
 
@@ -92,14 +101,18 @@ export ANTHROPIC_API_KEY="sk-ant-xxxxxx"
 chrome://inspect/#remote-debugging
 ```
 
-**方式二**：命令行启动参数
+**方式二**：命令行启动（推荐，可控制配置文件隔离）
 
 ```bash
-# macOS
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+# macOS（必须加 --remote-allow-origins=* 否则 WebSocket 会被拒绝）
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --remote-debugging-port=9222 \
+  '--remote-allow-origins=*' \
+  --user-data-dir=/tmp/chrome-debug \
+  --no-first-run
 
 # Windows
-chrome.exe --remote-debugging-port=9222
+chrome.exe --remote-debugging-port=9222 --remote-allow-origins=* --user-data-dir=%TEMP%\chrome-debug
 ```
 
 完成后在 Chrome 中打开 `www.zhipin.com` 并登录账号。
@@ -319,10 +332,13 @@ BossHunter/
 |------|---------|
 | `ModuleNotFoundError` | `pip3 install -e .` |
 | Chrome 连接失败 | 确认已开启远程调试：`chrome://inspect/#remote-debugging` |
-| 未发现某直聘页面 | 在 Chrome 中打开 `www.zhipin.com` 并登录 |
+| WebSocket 403 Forbidden | 启动 Chrome 时必须加 `'--remote-allow-origins=*'` 参数 |
+| 采集到 0 个岗位 | 检查 Chrome 是否以 `--remote-allow-origins=*` 启动，重启 Chrome |
+| 未发现某直聘页面 | 在调试 Chrome 中打开 `www.zhipin.com` 并登录 |
 | 没有待确认的岗位 | 先依次执行 scrape → score → greet |
-| 评分全为 0 | 检查 `ANTHROPIC_API_KEY` 环境变量是否设置 |
-| Web 面板打不开 | `pip3 install bottle` |
+| 评分全为 0 / 全被过滤 | 检查 API Key 是否设置；可适当降低 `prefilter_threshold`（默认 40） |
+| Web 面板打不开 | `pip3 install bottle pyyaml` |
+| 保存配置后 API Key 丢失 | 已修复（v1.1+）；如遇旧版本请重新填写 Key 后保存 |
 | 发送被跳过（时间窗口） | 当前时间不在 `send_windows` 内，默认 09:00-16:00 |
 | 发送被跳过（随机休息） | 正常现象（5% 概率），使用 `--force` 参数跳过 |
 
